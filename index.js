@@ -20,7 +20,7 @@ app.use('/', routes);
 
 app.use((err, req, res, next) => {
     console.error('Error:', err);
-    res.status(error.status || 500).json({ error: 'An error occurred while processing the request' });
+    res.status(err.status || 500).json({ error: 'An error occurred while processing the request' });
 });
 
 app.listen(PORT, () => {

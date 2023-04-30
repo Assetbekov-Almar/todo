@@ -1,23 +1,45 @@
 const Todo = require('../models/todos');
 const asyncHandler = require('express-async-handler');
+const isIsoDate = require('../utils/isIsoDate');
+const { body, validationResult } = require('express-validator');
 
 const get_all_todos = asyncHandler(async (req, res) => {
     const todos = await Todo.find().exec();
     res.send({ todos });
 });
 
-const create_todo = asyncHandler(async (req, res) => {
-    const { description } = req.body;
-    const todo = new Todo({ description });
-    await todo.save();
-    res.sendStatus(201);
-});
+const create_todo = [
+    body('description').notEmpty().withMessage('description is required'),
+    body('deadline').notEmpty().withMessage('deadline is required'),
+
+    asyncHandler(async (req, res) => {
+        const { description, deadline } = req.body;
+
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map((error) => error.msg);
+            return res.status(400).send(errorMessages);
+        }
+
+        if (!isIsoDate(deadline)) {
+            return res.status(400).send('Invalid deadline date');
+        }
+        const date = new Date(deadline);
+        const todo = new Todo({ description, deadline: date });
+        await todo.save();
+        res.sendStatus(201);
+    }),
+];
 
 const update_todo = asyncHandler(async (req, res) => {
-    const { id, description } = req.body;
-    const updatedTodo = await Todo.findOneAndUpdate({ id }, { $set: { description } });
+    const { id, description, deadline } = req.body;
+    if (!isIsoDate(deadline)) {
+        return res.status(400).send('Invalid deadline date');
+    }
+    const updatedTodo = await Todo.findOneAndUpdate({ id }, { $set: { description, deadline } });
     if (updatedTodo) {
-        res.sendStatus(200);
+        return res.sendStatus(200);
     }
     res.status(404).send('Todo is not found.');
 });

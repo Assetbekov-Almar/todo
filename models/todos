@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const TodoSchema = new Schema(
     {
         description: String,
+        deadline: Date,
     },
     { timestamps: true }
 );
