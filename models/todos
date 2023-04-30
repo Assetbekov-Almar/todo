@@ -6,6 +6,10 @@ const TodoSchema = new Schema(
     {
         description: String,
         deadline: Date,
+        status: {
+            type: String,
+            enum: ['active', 'done'],
+        },
     },
     { timestamps: true }
 );

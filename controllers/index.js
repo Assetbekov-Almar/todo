@@ -26,21 +26,26 @@ const create_todo = [
             return res.status(400).send('Invalid deadline date');
         }
         const date = new Date(deadline);
-        const todo = new Todo({ description, deadline: date });
+        const todo = new Todo({ description, deadline: date, status: 'active' });
         await todo.save();
         res.sendStatus(201);
     }),
 ];
 
 const update_todo = asyncHandler(async (req, res) => {
-    const { id, description, deadline } = req.body;
-    if (!isIsoDate(deadline)) {
+    const { id, description, deadline, status } = req.body;
+
+    if (deadline && !isIsoDate(deadline)) {
         return res.status(400).send('Invalid deadline date');
     }
-    const updatedTodo = await Todo.findOneAndUpdate({ id }, { $set: { description, deadline } });
+
+    const updatedTodo = await Todo.findOneAndUpdate({ id }, { $set: { description, deadline, status } });
+    console.log(updatedTodo);
+
     if (updatedTodo) {
         return res.sendStatus(200);
     }
+
     res.status(404).send('Todo is not found.');
 });
 
