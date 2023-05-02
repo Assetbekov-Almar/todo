@@ -4,7 +4,7 @@ const isIsoDate = require('../utils/isIsoDate');
 const { body, validationResult } = require('express-validator');
 
 const get_all_todos = asyncHandler(async (req, res) => {
-    const todos = await Todo.find().exec();
+    const todos = await Todo.find().select('-__v');
     res.send({ todos });
 });
 

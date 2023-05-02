@@ -2,6 +2,8 @@ const express = require('express');
 const routes = require('./routes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
 require('dotenv').config();
 
 const mongoDB = process.env.MONGODB;
@@ -12,8 +14,10 @@ async function main() {
     await mongoose.connect(mongoDB);
 }
 
-const PORT = 3000;
+const PORT = 4000;
 const app = express();
+app.use(cors());
+
 app.use(bodyParser.json());
 
 app.use('/', routes);
