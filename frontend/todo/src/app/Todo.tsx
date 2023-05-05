@@ -1,6 +1,8 @@
 import { useQuery } from 'react-query';
 import styles from './page.module.css';
 import axios from 'axios';
+import { NewTodo } from './NewTodo';
+import classnames from 'classnames';
 
 type Todo = {
     _id: string;
@@ -26,11 +28,11 @@ export const Todo = () => {
     if (isError) return <div>Error loading data</div>;
 
     return (
-        <main className={styles.main}>
-            <h1 className={styles.title}>Welcome to Todo App</h1>
+        <main className={classnames(styles.main, 'text-2xl')}>
             {data?.todos.map((item) => (
                 <div key={item._id}>{item.description}</div>
             ))}
+            <NewTodo />
         </main>
     );
 };
